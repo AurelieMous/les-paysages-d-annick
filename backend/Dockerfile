@@ -1,7 +1,7 @@
 FROM node:22-alpine
-WORKDIR /frontend
+WORKDIR /backend
 COPY package*.json ./
 RUN npm install
 COPY . .
-EXPOSE 5173
-CMD ["npm", "run", "dev"]
+EXPOSE 3000
+CMD ["npm", "run", "start:dev"]
