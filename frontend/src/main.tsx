@@ -6,7 +6,7 @@ import HomePage from "./pages/HomePage.tsx";
 import AproposPage from "./pages/AproposPage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
 import PrestationPage from "./pages/PrestationPage.tsx";
-import AdminPage from "./pages/AdminPage.tsx";
+import DetailPage from "./pages/DetailPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -17,6 +17,10 @@ const router = createBrowserRouter([
             {
                 path: "",
                 element: <HomePage />
+            },
+            {
+                path: "/details",
+                element: <DetailPage/>
             },
             {
                 path:"/a-propos",
@@ -30,10 +34,6 @@ const router = createBrowserRouter([
                 path:"/prestations",
                 element: <PrestationPage/>
             },
-            {
-                path:"/admin",
-                element: <AdminPage/>
-            }
         ]
     }
 ])
