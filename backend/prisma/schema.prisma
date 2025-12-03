@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  albums       Album[]
+}
+
+model Album {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String?
+  owner        User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId      Int
+  coverPhoto   Photo?   @relation("AlbumCover", fields: [coverPhotoId], references: [id], onDelete: SetNull)
+  coverPhotoId Int?     @unique
+  photos       Photo[]  @relation("AlbumPhotos")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([ownerId])
+}
+
+model Photo {
+  id          Int      @id @default(autoincrement())
+  title       String?
+  description String?
+  album       Album    @relation("AlbumPhotos", fields: [albumId], references: [id], onDelete: Cascade)
+  albumId     Int
+  fileIdHd    String   // Google Drive fileId for HD version
+  fileIdThumb String   // Google Drive fileId for thumbnail
+  urlHd       String?  // optional : public URL if generated
+  urlThumb    String?  // optional : public URL if generated
+  exif        Json?    // optional metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  albumCover  Album?   @relation("AlbumCover")
+
+  @@index([albumId])
+}
