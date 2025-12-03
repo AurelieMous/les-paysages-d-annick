@@ -45,13 +45,28 @@ services:
       GOOGLE_DRIVE_FOLDER_ID: ${GOOGLE_DRIVE_FOLDER_ID}
       MAX_FILE_SIZE: ${MAX_FILE_SIZE:-20971520}
       ALLOWED_MIME_TYPES: ${ALLOWED_MIME_TYPES}
+      RUN_SEED: ${RUN_SEED:-false}
     volumes:
       - backend_uploads:/app/uploads
     ports:
       - "3000:3000"
     networks:
       - photographer-network
-    command: sh -c "npx prisma migrate deploy && node dist/main"
+    command: >
+      sh -c "
+        echo '🚀 Démarrage du backend...' &&
+        npx prisma migrate deploy &&
+        echo '✅ Migrations appliquées' &&
+        if [ \"$$RUN_SEED\" = \"true\" ]; then
+          echo '🌱 Exécution du seed...' &&
+          npx prisma db seed &&
+          echo '✅ Seed terminé';
+        else
+          echo '⏭️  Seed ignoré (RUN_SEED n est pas true)';
+        fi &&
+        echo '🎬 Démarrage de l application...' &&
+        node dist/main
+      "
 
   # Frontend
   frontend:
