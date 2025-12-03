@@ -22,9 +22,29 @@ Créer une application web vitrine pour une photographe permettant de :
 
 ---
 
-## 2. Périmètre fonctionnel
+## 2. Technologies choisies et justification
 
-### 2.1 Front-office (visiteurs)
+
+| Technologie                   | Pourquoi elle est choisie                                                                                                |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **React + TypeScript (Vite)** | SPA performante, typée et maintenable, rapide à builder avec Vite, excellente intégration avec composants UI modernes |
+| **NestJS / Express**          | Backend structuré, supporte REST API facilement, bonne intégration avec Sharp pour traitement image                    |
+| **PostgreSQL + Prisma**       | Base relationnelle robuste, Prisma simplifie les requêtes et migrations, typage parfait pour TypeScript                 |
+| **Google Drive API**          | Stockage gratuit pour MVP, stockage cloud persistant, simple à intégrer via backend                                    |
+| **Sharp**                     | Traitement image performant, redimensionnement, compression, suppression métadonnées, conversion WebP/AVIF             |
+
+### Librairies UI proposées
+
+* **DaisyUI (sur TailwindCSS)** : composant léger, facile à personnaliser, rapide pour prototyper
+* **Material-UI (MUI)** : composants riches, responsive, thème clair/sombre, design cohérent et complet
+
+> Pour un MVP rapide, DaisyUI est suffisant, mais pour une version plus riche et maintenable, MUI est recommandé.
+
+---
+
+## 3. Périmètre fonctionnel
+
+### 3.1 Front-office (visiteurs)
 
 * Page d'accueil (présentation + albums récents)
 * Page liste des albums (vignette + titre + date)
@@ -32,7 +52,7 @@ Créer une application web vitrine pour une photographe permettant de :
 * Page photo : image HD (URL optimisée), titre, description, navigation prev/next
 * Page contact (formulaire) — optionnel hors MVP
 
-### 2.2 Back-office (admin)
+### 3.2 Back-office (admin)
 
 * Authentification admin (email + mot de passe)
 * CRUD Albums (titre, description, image de couverture)
@@ -40,7 +60,7 @@ Créer une application web vitrine pour une photographe permettant de :
 * Upload multiple supporté (front: multi-select, backend: file queue)
 * Gestion des droits (uniquement l'admin peut modifier)
 
-### 2.3 Non-fonctionnel
+### 3.3 Non-fonctionnel
 
 * Responsive mobile-first
 * Temps de chargement optimisé (lazy loading, CDN si possible)
@@ -49,7 +69,7 @@ Créer une application web vitrine pour une photographe permettant de :
 
 ---
 
-## 3. MVP (Minimum Viable Product)
+## 4. MVP (Minimum Viable Product)
 
 Fonctionnalités minimales pour mise en production du prototype :
 
@@ -60,9 +80,9 @@ Fonctionnalités minimales pour mise en production du prototype :
 
 ---
 
-## 4. Architecture technique & pipeline d'upload
+## 5. Architecture technique & pipeline d'upload
 
-### 4.1 Architecture générale
+### 5.1 Architecture générale
 
 ```
 [React + TypeScript (Vite) - Front]  <--HTTPS-->  [API REST (NestJS/Express) - Backend]
@@ -74,7 +94,7 @@ Fonctionnalités minimales pour mise en production du prototype :
                                             PostgreSQL (Prisma ORM)
 ```
 
-### 4.2 Pipeline d'upload (détail)
+### 5.2 Pipeline d'upload (détail)
 
 1. L'admin sélectionne une photo(s) dans l'UI admin et envoie via `POST /api/photos/upload`.
 2. Backend reçoit le fichier temporairement (multer / busboy) et stocke en tmp.
@@ -90,7 +110,7 @@ Fonctionnalités minimales pour mise en production du prototype :
 
 ---
 
-## 5. Sécurité et bonnes pratiques
+## 6. Sécurité et bonnes pratiques
 
 * Ne jamais exposer la clé JSON du compte de service Google côté client
 * Stocker la clé JSON et secrets dans des variables d'environnement (ex: Vault, secrets manager, ou CI/CD variables)
@@ -101,7 +121,7 @@ Fonctionnalités minimales pour mise en production du prototype :
 
 ---
 
-## 6. Use Case (diagramme)
+## 7. Use Case (diagramme)
 
 ```mermaid
 %% Use case diagram - acteurs : Visitor, Admin
@@ -125,7 +145,7 @@ usecaseDiagram
 
 ---
 
-## 7. ERD (Entity Relationship Diagram simplifié)
+## 8. ERD (Entity Relationship Diagram simplifié)
 
 ```mermaid
 erDiagram
@@ -160,11 +180,11 @@ erDiagram
   }
 ```
 
-> Note : l'entité `File` a été fusionnée avec `Photo` pour simplifier. Les colonnes `fileIdHd` et `fileIdThumb` stockent directement les identifiants Google Drive des images HD et miniature.
+> L'entité `File` a été fusionnée avec `Photo`. `fileIdHd` et `fileIdThumb` stockent les identifiants Google Drive pour simplifier.
 
 ---
 
-## 8. Modèle Prisma (proposition)
+## 9. Modèle Prisma (proposition)
 
 ```prisma
 generator client {
@@ -217,7 +237,7 @@ model Photo {
 
 ---
 
-## 9. Endpoints API recommandés
+## 10. Endpoints API recommandés
 
 * `POST /api/auth/login` → retourne JWT
 * `GET /api/albums` → liste albums
@@ -229,8 +249,9 @@ model Photo {
 * `PUT /api/photos/:id` → modifier photo
 * `DELETE /api/photos/:id` → supprimer photo
 
+---
 
-## 10. Possibilités d'amélioration futures
+## 11. Possibilités d'amélioration futures
 
 * Ajout de filtres par tags, catégories, ou date
 * Système de tri et recherche avancée
@@ -243,15 +264,15 @@ model Photo {
 
 ---
 
-## 11. Mise en production (Docker + serveur OVH + nom de domaine)
+## 12. Mise en production (Docker + serveur OVH + nom de domaine)
 
-### 11.1 Pré-requis
+### 12.1 Pré-requis
 
 * Serveur VPS ou cloud OVH avec Docker et Docker Compose installés
 * Nom de domaine configuré pour pointer vers le serveur (DNS A/AAAA records)
 * Certificat SSL (Let's Encrypt) pour HTTPS
 
-### 11.2 Étapes
+### 12.2 Étapes
 
 1. Créer des Dockerfiles pour frontend et backend :
    * Frontend React TS buildé et servi via Nginx
@@ -265,9 +286,16 @@ model Photo {
 5. Reverse proxy Nginx ou Traefik pour gérer HTTPS et nom de domaine
 6. Tests de bout en bout pour vérifier frontend ↔ backend ↔ Google Drive
 
-### 11.3 Bénéfices
+### 12.3 Bénéfices
 
 * Isolation complète des services (frontend, backend, DB)
 * Facilité de déploiement et migration
 * Reproductibilité sur d’autres serveurs ou cloud
 * Gestion simplifiée des mises à jour via Docker Compose
+
+---
+
+## 13. Prochaines étapes
+
+* Générer endpoint Express/NestJS complet d'upload + Sharp + Google Drive
+* Créer la structure React TS (Vite) avec pages Albums/Photo/Admin
