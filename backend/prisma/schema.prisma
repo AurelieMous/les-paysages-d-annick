@@ -14,7 +14,7 @@ model User {
   id           Int      @id @default(autoincrement())
   email        String   @unique
   passwordHash String
-  role         String   @default("admin")
+  role         Role
   createdAt    DateTime @default(now())
   albums       Album[]
 }
@@ -40,14 +40,19 @@ model Photo {
   description String?
   album       Album    @relation("AlbumPhotos", fields: [albumId], references: [id], onDelete: Cascade)
   albumId     Int
-  fileIdHd    String   // Google Drive fileId for HD version
-  fileIdThumb String   // Google Drive fileId for thumbnail
-  urlHd       String?  // optional : public URL if generated
-  urlThumb    String?  // optional : public URL if generated
-  exif        Json?    // optional metadata
+  fileIdHd    String // Google Drive fileId for HD version
+  fileIdThumb String // Google Drive fileId for thumbnail
+  urlHd       String? // optional : public URL if generated
+  urlThumb    String? // optional : public URL if generated
+  exif        Json? // optional metadata
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   albumCover  Album?   @relation("AlbumCover")
 
   @@index([albumId])
+}
+
+enum Role {
+  admin
+  client
 }
